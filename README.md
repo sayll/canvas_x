@@ -4,6 +4,7 @@ canvas绘制海报，生成logo二维码。也可生成编辑界面，用户自�
 ## 使用方法
 可直接通过script标签引入`lib/canvas_x.js`，也可当第三方模块引入。
 > 通过script引入，可通过全局变量`canvas_x`直接使用。详情可见demo。
+
 ![预览](./test/assets/doc.png "预览")
 
 ## 接口
