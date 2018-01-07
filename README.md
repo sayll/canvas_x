@@ -18,7 +18,7 @@ canvas绘制海报，生成logo二维码。也可生成编辑界面，用户自�
 |参数|类型|描述|
 |---|---|---|
 |options|array|ImageEntry，TextEntry或QRCodeEntry（详细见基础类型参数）|
-|callback|function|回调参数：(error?: string | Error, data?: string) => void|
+|callback|function|回调参数：(error?: string, data?: string) => void|
 
 ## renderEditor：生成编辑界面
 > 可以接受三个类型：图片，文字，二维码
@@ -43,7 +43,7 @@ canvas绘制海报，生成logo二维码。也可生成编辑界面，用户自�
 |width|number|绘制的宽度|
 |height|number|绘制的高度|
 |editable|boolean|能否编辑，编辑模式下使用|
-|selectImage|function|如需替换自己的资源为替换图片，可使用此参数； 参数返回一个 callback 接受你替换的图片 (base64|url) 注：当 editable 设置为 true 时，selectImage 将阻止默认 input[type=file]选取图片的默认行为|
+|selectImage|function|如需替换自己的资源为替换图片，可使用此参数； 参数返回一个 callback 接受你替换的图片 (base64或url) 注：当 editable 设置为 true 时，selectImage 将阻止默认 input[type=file]选取图片的默认行为|
 |x|number|相对于左上角的水平坐标|
 |y|number|相对于左上角的垂直坐标|
 |opacity|number|透明度。0-1 之间|
