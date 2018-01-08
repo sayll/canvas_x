@@ -18,7 +18,7 @@ canvas绘制海报，生成logo二维码。也可生成编辑界面，用户自�
 
 |参数|类型|描述|
 |---|---|---|
-|options|array|ImageEntry，TextEntry或QRCodeEntry（详细见基础类型参数）|
+|options|object|MakeImageOptions（详情请见，核心配置项）|
 |callback|function|回调参数：(error?: string, data?: string) => void|
 
 ## renderEditor：生成编辑界面
@@ -27,9 +27,20 @@ canvas绘制海报，生成logo二维码。也可生成编辑界面，用户自�
 |参数|类型|描述|
 |---|---|---|
 |container|HTMLElement|一个容器元素节点|
-|options|array|ImageEntry，TextEntry或QRCodeEntry（详细见基础类型参数）|
+|options|object|MakeImageOptions（详情请见，核心配置项|
 |callback|function|回调参数：(base64: string) => void|
 
+
+## MakeImageOptions: 核心配置项
+
+|参数|类型|描述|
+|---|---|---|
+|parts|array|各组成部分(ImageEntry , TextEntry , QRCodeEntry): 详细见基础类型参数|
+|width|number|最终图片宽度，建议为显示容器的二倍|
+|height|number|最终图片高度，建议为显示容器的二倍|
+|buttonText|string|编辑模式下，绘制画布按钮文案：null时，隐藏按钮。默认：'绘制画布'|
+|resetButtonText|string|编辑模式下，重新编辑按钮文案：为空或null时，隐藏按钮。默认：'重新编辑'|
+|compress|number|最终图片压缩比，默认0.8|
 
 ## 基础类型参数
 - ImageEntry: 表示一个图片部分。
