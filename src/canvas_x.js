@@ -189,7 +189,7 @@ function makeImage(options, callback) {
         const isMinus = options.x < 0 ? -1 : 1
         handleImage({
           type: 'image',
-          url: options.logo || 'http://oss.weidai.com.cn/weidai/qrcodeLogo.png',
+          url: options.logo || 'http://via.placeholder.com/100x100',
           width: width * ratio,
           height: height * ratio,
           x: isMinus * width * (0.5 - ratio / 2) + (options.x || 0),
