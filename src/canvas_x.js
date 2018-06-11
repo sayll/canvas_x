@@ -35,9 +35,16 @@ function makeImage(options, callback) {
       positionY = options.height + y - o.height
     }
 
+    positionY = positionY || y || 0
+    if (o.lineAlign === 'middle') {
+      positionY -= (o.height / 2) * o.len
+    } else if (o.lineAlign === 'bottom') {
+      positionY -= o.height * o.len
+    }
+
     return {
       x: positionX || x || 0,
-      y: positionY || y || 0
+      y: positionY
     }
   }
 
@@ -109,6 +116,8 @@ function makeImage(options, callback) {
       mainCtx.globalAlpha = options.opacity || 1
 
       const position = setPosition(options.x, options.y + lineHeight * i, {
+        len, // 处理lineAlign
+        ...options,
         height: lineHeight,
         width: mainCtx.measureText(arr[i]).width
       })
