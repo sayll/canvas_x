@@ -110,14 +110,14 @@ function makeImage(options, callback) {
       mainCtx.fillStyle = options.color || bodyStyle.color
 
       // 设置文本对齐方式
-      mainCtx.textAlign = options.align || "left";
+      mainCtx.textAlign = options.align || 'left'
 
       // 设置透明度
       mainCtx.globalAlpha = options.opacity || 1
 
       const position = setPosition(options.x, options.y + lineHeight * i, {
         len, // 处理lineAlign
-        ...options,
+        lineAlign: options.lineAlign,
         height: lineHeight,
         width: mainCtx.measureText(arr[i]).width
       })
