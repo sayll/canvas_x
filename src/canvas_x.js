@@ -102,6 +102,9 @@ function makeImage(options, callback) {
       mainCtx.font = `${options.bold ? `bold ` : ''}${options.size || bodyStyle.fontSize} ${bodyStyle.fontFamily}`
       mainCtx.fillStyle = options.color || bodyStyle.color
 
+      // 设置文本对齐方式
+      mainCtx.textAlign = options.align || "left";
+
       // 设置透明度
       mainCtx.globalAlpha = options.opacity || 1
 

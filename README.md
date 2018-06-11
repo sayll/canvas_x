@@ -70,6 +70,7 @@ canvas绘制海报，生成logo二维码。也可生成编辑界面，用户自�
 |size|string|字体大小|
 |color|string|字体颜色|
 |bold|boolean|是否加粗|
+|align|string|文本对齐方式，"left"、"right"、"center"，三种方式。使用居中方式，需将X设置为画板的一半|
 |editable|boolean|能否编辑，编辑模式下使用|
 |x|number|相对于左上角的水平坐标|
 |y|number|相对于左上角的垂直坐标|
