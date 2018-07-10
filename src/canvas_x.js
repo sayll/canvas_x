@@ -129,6 +129,17 @@ function makeImage(options, callback) {
     nextFunc && nextFunc()
   }
 
+  function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1])
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+    const ab = new ArrayBuffer(byteString.length)
+    const ia = new Uint8Array(ab)
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i)
+    }
+    return new Blob([ab], {type: mimeString})
+  }
+
   function handleImage(options, nextFunc) {
     const { width, height, x, y, url } = options
     const padding = options.padding || 0
@@ -136,7 +147,8 @@ function makeImage(options, callback) {
     const position = setPosition(x, y, { width, height })
 
     img.crossOrigin = 'anonymous'
-    img.src = url
+    // 兼容问题：base64需要特殊处理
+    img.src = !~url.indexOf('data:image/') ? url : URL.createObjectURL(dataURItoBlob(url))
 
     // 加载完成，绘制至画布
     img.onerror = err => {
