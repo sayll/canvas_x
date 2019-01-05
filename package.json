@@ -1,12 +1,33 @@
 {
-  "name": "rollup",
-  "main": "bundle.js",
+  "name": "@sayll/canvas_x",
+  "main": "./lib/canvas_x.js",
+  "version": "0.0.2",
+  "description": "canvas绘制工具库",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sayll/canvas_x"
+  },
+  "keywords": [
+    "canvas_x",
+    "canvas",
+    "html",
+    "js",
+    "tool"
+  ],
   "scripts": {
     "build": "rollup -c internals/prop.js",
     "build:dev": "rollup -c internals/dev.js -w",
     "browse": "browser-sync start --s --index test/index.html --files static/**,dist/** --no-notify",
-    "start": "npm-run-all --parallel build:dev browse"
+    "start": "npm-run-all --parallel build:dev browse",
+    "publish": "npm publish --access=public"
   },
+  "files": [
+    "src",
+    "lib",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
