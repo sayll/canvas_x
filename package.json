@@ -1,7 +1,7 @@
 {
   "name": "@sayll/canvas_x",
   "main": "./lib/canvas_x.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "canvas绘制工具库",
   "repository": {
     "type": "git",
