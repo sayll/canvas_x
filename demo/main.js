@@ -37,44 +37,54 @@ cx.makeImage({
     {
       type: 'image',
       url: mMain.src,
-      width: 300,
-      height: 300
+      width: 600,
+      height: 600
     },
     {
       type: 'image',
       url: avatar.src,
-      width: 150,
-      height: 150,
+      width: 300,
+      height: 300,
       radius: 1,
       padding: 5,
       background: '#fff',
-      x: 75,
-      y: 20
+      x: 150,
+      y: 40
     },
     {
       type: 'qrcode',
-      text: 'https://github.com/sayll/rollup',
+      text: 'https://github.com/sayll/canvas_x',
       logo: 'https://avatars3.githubusercontent.com/u/18632641?s=40&v=4',
-      x: -20,
+      x: -40,
       y: -40,
-      width: 80,
-      height: 80,
-      padding: 2,
+      width: 160,
+      height: 160,
+      padding: 4,
       background: '#fff',
       level: 3
     },
     {
       type: 'text',
-      text: '测试\n测试',
-      x: 10,
-      y: -100,
+      text: '水平测试\n水平测试',
+      textAlign: 'right',
+      y: 0,
+      color: '#abcdef',
+      size: '40px',
+      bold: true
+    },
+    {
+      type: 'text',
+      text: '垂直测试\n垂直测试',
+      textAlign: 'center',
+      lineAlign: 'bottom',
+      x: 0,
       color: '#abcdef',
       size: '40px',
       bold: true
     }
   ],
-  width: 300,
-  height: 300
+  width: 600,
+  height: 600
 }, (err, data) => {
   document.getElementById('test').src = data
 })

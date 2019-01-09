@@ -22,8 +22,10 @@ function makeImage(options, callback) {
    * @param {number} x: positionX
    * @param {number} y: positionY
    * @param {object} o: width & height
-   * @param {number} o.width: width
-   * @param {number} o.height: height
+   * @param {number} o.width: 文字的宽度
+   * @param {number} o.height: 文字的高度
+   * @param {number} o.lineAlign: 文字的垂直对齐方式
+   * @param {number} o.lineNum: 文字的行数
    * */
   function setPosition(x, y, o) {
     let positionX, positionY
@@ -38,16 +40,28 @@ function makeImage(options, callback) {
       positionY = options.height + y - o.height
     }
     
+    positionX = positionX || x || 0
     positionY = positionY || y || 0
+    // 文字的垂直对齐方式处理
     if (o.lineAlign === 'middle') {
-      positionY -= (o.height / 2) * o.len
+      positionY -= (o.height / 2) * o.lineNum - options.height / 2
     }
     else if (o.lineAlign === 'bottom') {
-      positionY -= o.height * o.len
+      console.log(o.height * o.lineNum - options.height)
+      positionY -= o.height * o.lineNum - options.height
     }
     
+    // 文字的水平对齐方式处理
+    if (o.textAlign === 'center') {
+      positionX -= o.width / 2 - options.width / 2
+    }
+    else if (o.textAlign === 'right') {
+      positionX -= o.width - options.width
+    }
+    
+    
     return {
-      x: positionX || x || 0,
+      x: positionX,
       y: positionY
     }
   }
@@ -131,21 +145,21 @@ function makeImage(options, callback) {
     // 设置字体后，再获取图片的宽高
     const lineHeight = parseFloat(options.size || bodyStyle.fontSize) * 1.2
     
-    for (let i = 0, len = arr.length; i < len; i++) {
+    for (let i = 0, lineNum = arr.length; i < lineNum; i++) {
       // 设置字体
       mainCtx.textBaseline = 'top'
       mainCtx.font = `${options.bold ? `bold ` : ''}${options.size || bodyStyle.fontSize} ${bodyStyle.fontFamily}`
       mainCtx.fillStyle = options.color || bodyStyle.color
       
       // 设置文本对齐方式
-      mainCtx.textAlign = options.align || 'left'
+      mainCtx.textAlign = 'left'
       
       // 设置透明度
       mainCtx.globalAlpha = options.opacity || 1
-      
-      const position = setPosition(options.x, options.y + lineHeight * i, {
-        len, // 处理lineAlign
+      const position = setPosition(options.x || 0, (options.y || 0) + lineHeight * i, {
+        lineNum, // 处理lineAlign
         lineAlign: options.lineAlign,
+        textAlign: options.textAlign,
         height: lineHeight,
         width: mainCtx.measureText(arr[i]).width
       })
