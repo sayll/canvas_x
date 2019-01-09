@@ -76,7 +76,17 @@ canvas_x.makeImage({...})
 |x|number|相对于左上角的水平坐标|
 |y|number|相对于左上角的垂直坐标|
 |opacity|number|透明度。0-1 之间|
-|clipOptions|object|x: 表示截取图片的x定位; y: 表示截取图片的y定位; zoom: 是否进行图片等比缩放|
+|clipOptions|object|详细见[ClipOptions](#ClipOptions)参数|
+
+#### ClipOptions
+图片剪切所需参数
+
+|参数|类型|描述|
+|---|---|---|
+|x|number|相对于左上角的水平坐标|
+|y|number|相对于左上角的垂直坐标|
+|zoom|boolean|等比缩放图片|
+|align|string|目前只支持'center';图片正中间；|
 
 ### TextEntry
 表示一个文本部分。

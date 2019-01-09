@@ -47,7 +47,6 @@ function makeImage(options, callback) {
       positionY -= (o.height / 2) * o.lineNum - options.height / 2
     }
     else if (o.lineAlign === 'bottom') {
-      console.log(o.height * o.lineNum - options.height)
       positionY -= o.height * o.lineNum - options.height
     }
     
@@ -106,9 +105,12 @@ function makeImage(options, callback) {
     tailorImg(x, y, w - p * 2, h - p * 2, r)
     // 针对非同比例的图片进行部分剪裁
     if (clipOptions) {
+      clipOptions.x = clipOptions.x || 0
+      clipOptions.y = clipOptions.y || 0
+      
       // 缩放图片，方便截取选区
       if (clipOptions.zoom) {
-        let dw, dh
+        let dw, dh, offset = 0
         if (img.height > img.width) {
           dw = w - p * 2
           dh = img.height * w / img.width - p * 2
@@ -117,10 +119,22 @@ function makeImage(options, callback) {
           dw = img.width * h / img.height - p * 2
           dh = h - p * 2
         }
-        mainCtx.drawImage(img, x - clipOptions.x, y - clipOptions.y, dw, dh)
+        // 裁剪居中偏移量
+        if (clipOptions.align === 'center') {
+          offset = Math.abs((dw - dh) / 2)
+        }
+        
+        mainCtx.drawImage(img, x - clipOptions.x - (dw > dh ? offset : 0), y - clipOptions.y - (dh > dw ? offset : 0), dw, dh)
       }
       else {
-        mainCtx.drawImage(img, x - clipOptions.x, y - clipOptions.y)
+        if (clipOptions.align === 'center') {
+          const offsetX = Math.abs((img.width - w - p) / 2)
+          const offsetY = Math.abs((img.height - h - p) / 2)
+          mainCtx.drawImage(img, x - offsetX, x - offsetY)
+        }
+        else {
+          mainCtx.drawImage(img, x - clipOptions.x, y - clipOptions.y)
+        }
       }
     }
     else {

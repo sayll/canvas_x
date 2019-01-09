@@ -49,7 +49,11 @@ cx.makeImage({
       padding: 5,
       background: '#fff',
       x: 150,
-      y: 40
+      y: 40,
+      clipOptions: {
+        zoom: true,
+        align: 'center'
+      }
     },
     {
       type: 'qrcode',
