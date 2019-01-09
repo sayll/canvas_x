@@ -1,10 +1,14 @@
+import cx from '../src/canvas_x'
+import mMain from './assets/mMain.png'
+import avatar from './assets/avatar.jpg'
+
 // 编辑界面
-canvas_x.renderEditor(document.getElementById('test2'), {
+cx.renderEditor(document.getElementById('test2'), {
   type: 'url',
   parts: [
     {
       type: 'image',
-      url: './assets/mMain.png',
+      url: mMain.src,
       width: 200,
       height: 200,
       editable: true
@@ -19,25 +23,26 @@ canvas_x.renderEditor(document.getElementById('test2'), {
       y: 150
     }
   ],
-  resetButtonText: '重新编辑',
   width: 200,
-  height: 200,
-  compress: 1
+  height: 210,
+  compress: 1,
+  background: 'beige',
+  resetButtonText: '重新编辑'
 })
 
 // 高级绘制
-canvas_x.makeImage({
+cx.makeImage({
   type: 'url',
   parts: [
     {
       type: 'image',
-      url: './assets/mMain.png',
+      url: mMain.src,
       width: 300,
       height: 300
     },
     {
       type: 'image',
-      url: './assets/avatar.jpg',
+      url: avatar.src,
       width: 150,
       height: 150,
       radius: 1,

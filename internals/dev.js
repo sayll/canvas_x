@@ -5,7 +5,7 @@ import base from './base'
 
 const config = base
 
-config.input = 'test/main.js'
+config.input = 'demo/main.js'
 config.output = {
   name: 'cx',
   file: 'dist/main.js',

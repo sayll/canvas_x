@@ -7,13 +7,16 @@ import './style.pcss'
 function makeImage(options, callback) {
   const { parts, width, height } = options
   let error = null
-
+  
   // 初始化Canvas
   const canvas = document.createElement('canvas')
   const mainCtx = canvas.getContext('2d')
   canvas.width = width
   canvas.height = height
-
+  mainCtx.fillStyle = options.background || '#fff'
+  mainCtx.fillRect(0, 0, width, height)
+  mainCtx.save()
+  
   /**
    * 设置宽高，针对负值定位做处理
    * @param {number} x: positionX
@@ -24,36 +27,39 @@ function makeImage(options, callback) {
    * */
   function setPosition(x, y, o) {
     let positionX, positionY
-
+    
     // 处理padding 与 负定位
     if (x < 0) {
       positionX = options.width + x - o.width
     }
-
+    
     // 处理padding 与 负定位
     if (y < 0) {
       positionY = options.height + y - o.height
     }
-
+    
     positionY = positionY || y || 0
     if (o.lineAlign === 'middle') {
       positionY -= (o.height / 2) * o.len
-    } else if (o.lineAlign === 'bottom') {
+    }
+    else if (o.lineAlign === 'bottom') {
       positionY -= o.height * o.len
     }
-
+    
     return {
       x: positionX || x || 0,
       y: positionY
     }
   }
-
+  
   /**
    * 针对圆角做处理
    * */
   function tailorImg(x, y, w, h, r) {
-    // beginPath 与 closePath来关闭绘制圆，以免影响后续绘制，
-    // 因为不关闭绘制，会导致后续图片全部倍遮挡
+    /**
+     * beginPath 与 closePath来关闭绘制圆，以免影响后续绘制，
+     * 因为不关闭绘制，会导致后续图片全部倍遮挡.
+     * */
     mainCtx.save()
     mainCtx.beginPath()
     mainCtx.moveTo(x + r, y)
@@ -64,7 +70,7 @@ function makeImage(options, callback) {
     mainCtx.clip()
     mainCtx.closePath()
   }
-
+  
   function handleTailorImg(options) {
     const {
       image: img,
@@ -73,20 +79,42 @@ function makeImage(options, callback) {
       height: h,
       radius: r,
       padding: p,
-      background: bg
+      background: bg,
+      clipOptions
     } = options
-
+    
     // tailorImg中save保存当前画布，restore将保存的画布重新绘制
     tailorImg(x - p, y - p, w, h, r)
     mainCtx.fillStyle = bg || '#fff'
     mainCtx.fill()
     mainCtx.restore()
-
+    
     tailorImg(x, y, w - p * 2, h - p * 2, r)
-    mainCtx.drawImage(img, x, y, w - p * 2, h - p * 2)
+    // 针对非同比例的图片进行部分剪裁
+    if (clipOptions) {
+      // 缩放图片，方便截取选区
+      if (clipOptions.zoom) {
+        let dw, dh
+        if (img.height > img.width) {
+          dw = w - p * 2
+          dh = img.height * w / img.width - p * 2
+        }
+        else {
+          dw = img.width * h / img.height - p * 2
+          dh = h - p * 2
+        }
+        mainCtx.drawImage(img, x - clipOptions.x, y - clipOptions.y, dw, dh)
+      }
+      else {
+        mainCtx.drawImage(img, x - clipOptions.x, y - clipOptions.y)
+      }
+    }
+    else {
+      mainCtx.drawImage(img, x, y, w - p * 2, h - p * 2)
+    }
     mainCtx.restore()
   }
-
+  
   /**
    * 绘制处理各类数据
    * @param {object} options: 绘制对象的配置
@@ -94,41 +122,41 @@ function makeImage(options, callback) {
    * */
   function handleText(options, nextFunc) {
     const bodyStyle = getComputedStyle(document.body)
-
+    
     // 没有任何文本内容直接跳出
     if (!options.text || typeof options.text !== 'string') return nextFunc()
-
+    
     const arr = options.text.toString().split('\n')
-
+    
     // 设置字体后，再获取图片的宽高
     const lineHeight = parseFloat(options.size || bodyStyle.fontSize) * 1.2
-
+    
     for (let i = 0, len = arr.length; i < len; i++) {
       // 设置字体
       mainCtx.textBaseline = 'top'
       mainCtx.font = `${options.bold ? `bold ` : ''}${options.size || bodyStyle.fontSize} ${bodyStyle.fontFamily}`
       mainCtx.fillStyle = options.color || bodyStyle.color
-
+      
       // 设置文本对齐方式
       mainCtx.textAlign = options.align || 'left'
-
+      
       // 设置透明度
       mainCtx.globalAlpha = options.opacity || 1
-
+      
       const position = setPosition(options.x, options.y + lineHeight * i, {
         len, // 处理lineAlign
         lineAlign: options.lineAlign,
         height: lineHeight,
         width: mainCtx.measureText(arr[i]).width
       })
-
+      
       mainCtx.fillText(arr[i], position.x, position.y)
     }
-
+    
     // 最后一个元素时，便执行回调,否则继续绘制
     nextFunc && nextFunc()
   }
-
+  
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1])
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
@@ -137,31 +165,31 @@ function makeImage(options, callback) {
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i)
     }
-    return new Blob([ab], {type: mimeString})
+    return new Blob([ab], { type: mimeString })
   }
-
-  function handleImage(options, nextFunc) {
+  
+  function handleImage(options = {}, nextFunc) {
     const { width, height, x, y, url } = options
     const padding = options.padding || 0
     const img = new Image()
     const position = setPosition(x, y, { width, height })
-
+    
     img.crossOrigin = 'anonymous'
     // 兼容问题：base64需要特殊处理
     img.src = !~url.indexOf('data:image/') ? url : URL.createObjectURL(dataURItoBlob(url))
-
+    
     // 加载完成，绘制至画布
     img.onerror = err => {
       error = err
-
+      
       // 最后一个元素时，便执行回调,否则继续绘制,
       nextFunc && nextFunc()
     }
-
+    
     img.onload = () => {
       // 设置透明度
       mainCtx.globalAlpha = options.opacity || 1
-
+      
       if (options.radius || padding > 0) {
         handleTailorImg({
           image: img,
@@ -171,7 +199,8 @@ function makeImage(options, callback) {
           height: height || img.height,
           radius: ((height || img.height) - 2 * padding) / 2 * (options.radius || 0),
           padding,
-          background: options.background
+          background: options.background,
+          clipOptions: options.clipOptions
         })
       }
       else {
@@ -183,16 +212,16 @@ function makeImage(options, callback) {
           (height || img.height) - padding * 2
         )
       }
-
+      
       // 最后一个元素时，便执行回调,否则继续绘制,
       nextFunc && nextFunc()
     }
   }
-
+  
   function handleQrCode(options, nextFunc) {
     options.width = options.width || 200
     options.height = options.height || options.width || 200
-
+    
     const { text, width, height, level } = options
     const qrCode = new QRCode(null, {
       text,
@@ -203,11 +232,11 @@ function makeImage(options, callback) {
       colorLight: '#ffffff'
     })
     const img = qrCode._oDrawing._elImage
-
+    
     // 绘制处理同image
     img.onload = () => {
       handleImage(Object.assign(options, { url: img.src }), !options.logo && nextFunc)
-
+      
       if (options.logo) {
         const ratio = 0.35
         const isMinus = options.x < 0 ? -1 : 1
@@ -223,11 +252,11 @@ function makeImage(options, callback) {
       }
     }
   }
-
+  
   // 初始化数据
   let len = parts.length
   let i = 0
-
+  
   const start = function () {
     /**
      * 最后一个元素时，便执行回调,否则继续绘制
@@ -239,7 +268,7 @@ function makeImage(options, callback) {
       !(len - i) ?
         callback && callback(error, canvas.toDataURL('image/jpeg', options.compress || .8)) : start()
     }
-
+    
     if (len - i) {
       switch (parts[i].type) {
         case 'text':
@@ -267,18 +296,18 @@ function makeImage(options, callback) {
 function renderEditor(container, options, callback) {
   function _extends(o) {
     const _options = {}
-
+    
     for (let key in o) {
       _options[key] = o[key]
     }
     return _options
   }
-
+  
   // 过滤需要编辑的文字
   const _options = _extends(options)
   _options.parts = _options.parts
     .filter(item => item.editable && item.type !== 'text')
-
+  
   // 生成HTML容器
   makeImage(_options, (error, data) => {
     // 初始化数据，为编辑状态却没有宽高的图片设置默认宽高,并导出该对象
@@ -289,21 +318,21 @@ function renderEditor(container, options, callback) {
           item._key = key
           return item.editable && item.type === 'image'
         })
-
+      
       // 处理编辑的图片：i用于循环遍历，editImageArrLen用于判断是否所有image都已加载完成
       let i, editImageArrLen
       editImageArrLen = i = editImageArr.length
-
+      
       while (i--) {
         const img = new Image()
         img.src = editImageArr[i].url
-
+        
         img.onload = ((i) => () => {
           // 初始化图片宽高
           editImageArr[i].width = editImageArr[i].width || img.width
           editImageArr[i].height = editImageArr[i].height || img.height
           editImageArrLen--
-
+          
           // 全部处理完成，将可编辑的图片，渲染为DOM
           if (!editImageArrLen) {
             callback && callback(editImageArr)
@@ -311,7 +340,7 @@ function renderEditor(container, options, callback) {
         })(i)
       }
     }
-
+    
     // 针对input change事件，通过key值映射，修改图片源
     function updateOptions(imageData, key) {
       options.parts.map(item => {
@@ -321,33 +350,33 @@ function renderEditor(container, options, callback) {
         }
         return item
       })
-
+      
       renderEditor(container, options, callback)
     }
-
+    
     function getBase64(e, callback) {
       const reader = new FileReader()
-
+      
       reader.addEventListener('load', function () {
         callback(this.result)
       }, false)
-
+      
       reader.readAsDataURL(e.target.files[0])
-
+      
       return e
     }
-
+    
     initEditImage(editImageList => {
       // 为每项编辑项添加input
       let html = ''
-
+      
       // 过滤，并添加key值，留下可编辑的文字
       const editTextArr = options.parts
         .filter((item, key) => {
           item._key = key
           return item.editable && item.type === 'text'
         })
-
+      
       // 渲染文字修改选框
       for (let i = editTextArr.length; i--;) {
         html +=
@@ -366,7 +395,7 @@ function renderEditor(container, options, callback) {
             >${editTextArr[i].text}</textarea>
           `
       }
-
+      
       // 渲染图片替换按钮
       for (let i = editImageList.length; i--;) {
         html +=
@@ -389,7 +418,7 @@ function renderEditor(container, options, callback) {
               <a>点击替换图片</a>
             </div>`
       }
-
+      
       // 创建视图
       container.innerHTML =
         `<div class="x-imaging-box">
@@ -401,7 +430,7 @@ function renderEditor(container, options, callback) {
             '<a class="x-make-image">绘制画布</a>') : ''
           }
           </div>`
-
+      
       // 冒泡筛选input change事件
       const handleChange = e => {
         if (e.target.className === 'x-input') {
@@ -409,29 +438,29 @@ function renderEditor(container, options, callback) {
           getBase64(e, imageData => updateOptions(imageData, key))
         }
       }
-
+      
       container.addEventListener('change', handleChange, false)
-
+      
       // 冒泡筛选input click事件
       const handleClick = e => {
         // 点击替换按钮的事件
         if (e.target.className === 'x-input') {
           const key = e.target.getAttribute('data-key')
           const cb = imageData => updateOptions(imageData, key)
-
+          
           options.parts[key].selectImage && (options.parts[key].selectImage)(cb)
         }
-
+        
         // 合并画布
         if (e.target.className === 'x-make-image') {
           const textDom = document.getElementsByClassName('x-textarea-container')
-
+          
           for (let i = textDom.length; i--;) {
             const key = textDom[i].getAttribute('data-key')
-
+            
             options.parts[key].text = textDom[i].value
           }
-
+          
           makeImage(options, (err, data) => {
             container.innerHTML =
               `<div class="x-imaging-box">
@@ -444,24 +473,24 @@ function renderEditor(container, options, callback) {
               </div>`
           })
         }
-
+        
         // 重新编辑
         if (e.target.className === 'x-again-make-image') {
           // 移除监听避免重复编辑，累加监听
           container.removeEventListener('click', handleClick, false)
           container.removeEventListener('change', handleChange, false)
-
+          
           renderEditor(container, options, callback)
         }
       }
-
+      
       container.addEventListener('click', handleClick, false)
-
+      
       callback && callback(data)
     })
-
+    
   })
-
+  
   // 返回一个生成画布的方法
   return {
     getValue: () => options,

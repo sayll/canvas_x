@@ -17,7 +17,7 @@
   "scripts": {
     "build": "rollup -c internals/prop.js",
     "build:dev": "rollup -c internals/dev.js -w",
-    "browse": "browser-sync start --s --index test/index.html --files static/**,dist/** --no-notify",
+    "browse": "browser-sync start --s --index demo/index.html --files static/**,dist/** --no-notify",
     "start": "npm-run-all --parallel build:dev browse",
     "publish": "npm publish --access=public"
   },

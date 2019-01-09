@@ -13,7 +13,7 @@ npm i -S @sayll/canvas_x
 可直接通过script标签引入`lib/canvas_x.js`，也可当第三方模块引入。
 > 通过script引入，可通过全局变量`canvas_x`直接使用。详情可见demo。
 
-![预览](./test/assets/doc.png "预览")
+![预览](./demo/assets/doc.png "预览")
 
 ## 接口
 |函数|描述|
@@ -46,6 +46,7 @@ npm i -S @sayll/canvas_x
 |parts|array|各组成部分(ImageEntry , TextEntry , QRCodeEntry): 详细见基础类型参数|
 |width|number|最终图片宽度，建议为显示容器的二倍|
 |height|number|最终图片高度，建议为显示容器的二倍|
+|background|string|画布底色|
 |buttonText|string|编辑模式下，绘制画布按钮文案：null时，隐藏按钮。默认：'绘制画布'|
 |resetButtonText|string|编辑模式下，重新编辑按钮文案：为空或null时，隐藏按钮。默认：'重新编辑'|
 |compress|number|最终图片压缩比，默认0.8|
@@ -67,6 +68,7 @@ npm i -S @sayll/canvas_x
 |x|number|相对于左上角的水平坐标|
 |y|number|相对于左上角的垂直坐标|
 |opacity|number|透明度。0-1 之间|
+|clipOptions|object|x: 表示截取图片的x定位; y: 表示截取图片的y定位; zoom: 是否进行图片等比缩放|
 
 - TextEntry: 表示一个文本部分。
 
