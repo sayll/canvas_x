@@ -198,6 +198,7 @@ function makeImage(options, callback) {
   
   function handleImage(options = {}, nextFunc) {
     const { width, height, x, y, url } = options
+    if (!url) return console.error('缺失绘制的图片 url')
     const padding = options.padding || 0
     const img = new Image()
     const position = setPosition(x, y, { width, height })
@@ -247,10 +248,11 @@ function makeImage(options, callback) {
   }
   
   function handleQrCode(options, nextFunc) {
-    options.width = options.width || 200
-    options.height = options.height || options.width || 200
+    let { text, width, height, level } = options
+    width = width || 200
+    height = height || width || 200
+    if (!url) return console.error('缺失绘制的二维码的 text')
     
-    const { text, width, height, level } = options
     const qrCode = new QRCode(null, {
       text,
       width,

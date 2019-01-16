@@ -1,7 +1,7 @@
 {
   "name": "@sayll/canvas_x",
   "main": "./lib/canvas_x.js",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "canvas绘制工具库",
   "repository": {
     "type": "git",
@@ -18,8 +18,7 @@
     "build": "rollup -c internals/prop.js",
     "build:dev": "rollup -c internals/dev.js -w",
     "browse": "browser-sync start --s --index demo/index.html --files static/**,dist/** --no-notify",
-    "start": "npm-run-all --parallel build:dev browse",
-    "publish": "npm publish --access=public"
+    "start": "npm-run-all --parallel build:dev browse"
   },
   "files": [
     "src",
