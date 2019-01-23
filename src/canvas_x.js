@@ -251,7 +251,7 @@ function makeImage(options, callback) {
     let { text, width, height, level } = options
     width = width || 200
     height = height || width || 200
-    if (!url) return console.error('缺失绘制的二维码的 text')
+    if (!text) return console.error('缺失绘制的二维码的 text')
     
     const qrCode = new QRCode(null, {
       text,
